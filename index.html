@@ -1,1 +1,82 @@
 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8" />
+  <title>Quản lý danh sách hàng hoá</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f5f5f5; padding:10px; }
+    h1 { margin-bottom: 10px; font-size:22px; }
+    h3 { font-size:16px; margin-top:15px; }
+    .box { background:#fff; padding:15px; border-radius:10px; max-width:100%; }
+    input, button { padding:12px; margin:6px 0; font-size:16px; }
+    input { width: 100%; box-sizing:border-box; }
+    button { width:100%; border:none; background:#2563eb; color:#fff; border-radius:8px; }
+    ul { list-style:none; padding:0; margin:0; }
+    li { padding:10px; border-bottom:1px solid #ddd; font-size:16px; }
+    li:last-child { border-bottom:none; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Danh sách hàng hoá</h1>
+
+    <input type="text" id="search" placeholder="Tìm kiếm hàng hoá..." onkeyup="searchItem()" />
+
+    <h3>Thêm hàng hoá</h3>
+    <input type="text" id="newItem" placeholder="Tên hàng hoá" />
+    <input type="number" id="newPrice" placeholder="Giá (VNĐ)" />
+    <button onclick="addItem()">Thêm</button>
+
+    <h3>Danh sách</h3>
+    <ul id="itemList"></ul>
+  </div>
+
+  <script>
+    let items = JSON.parse(localStorage.getItem("items")) || [
+      { name: "Gạo", price: 15000 },
+      { name: "Đường", price: 18000 },
+      { name: "Sữa", price: 30000 },
+      { name: "Bánh mì", price: 5000 },
+      { name: "Nước ngọt", price: 12000 }
+    ];
+
+    function renderList(list) {
+      const ul = document.getElementById("itemList");
+      ul.innerHTML = "";
+      list.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item.name + " - " + item.price.toLocaleString() + " VNĐ";
+        ul.appendChild(li);
+      });
+    }
+
+    function addItem() {
+      const nameInput = document.getElementById("newItem");
+      const priceInput = document.getElementById("newPrice");
+      const name = nameInput.value.trim();
+      const price = Number(priceInput.value);
+
+      if (name !== "" && !isNaN(price)) {
+        items.push({ name: name, price: price });
+        localStorage.setItem("items", JSON.stringify(items));
+        nameInput.value = "";
+        priceInput.value = "";
+        renderList(items);
+    localStorage.setItem("items", JSON.stringify(items));
+      }
+    }
+
+    function searchItem() {
+      const keyword = document.getElementById("search").value.toLowerCase();
+      const filtered = items.filter(item =>
+        item.name.toLowerCase().includes(keyword)
+      );
+      renderList(filtered);
+    }
+
+    renderList(items);
+  </script>
+</body>
+</html>
